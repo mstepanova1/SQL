@@ -111,10 +111,10 @@ limit 1)
 
 select sum(a.AMOUNT) as 'TOTAL AMOUNT'
 from (
-		select *
-		from shop.vendorcode 
-		order by PRICE desc 
-		limit 3
+	select *
+	from shop.vendorcode 
+	order by PRICE desc 
+	limit 3
 ) a
 where a.PRICE>142
 ;
@@ -208,37 +208,37 @@ and l.PRODUCTCATEGORY=v.PRODUCTCATEGORY
 -- 19. ДАТЬ НАЗВАНИЙ КАТЕГОРИЙ КУПЛЕННЫХ ТОВАРОВ НА РУССКОМ
 
 select *,
-		case
-				when CATEGORYNAME = 'DAIRY' then 'МОЛОЧНЫЕ ПРОДУКТЫ'
-				when CATEGORYNAME = 'FRUIT' then 'ФРУКТЫ'
-				when CATEGORYNAME = 'BAKERY PRODUCTS' then 'ВЫПЕЧКА'
-				when CATEGORYNAME = 'VEGETABLES' then 'ОВОЩИ'	
-				when CATEGORYNAME = 'DRINKS' then 'НАПИТКИ'	
-				when CATEGORYNAME = 'SAUCES' then 'СОУСЫ'
-				when CATEGORYNAME = 'SPICES' then 'СПЕЦИИ'
-				when CATEGORYNAME = 'MEAT' then 'МЯСО'
-				when CATEGORYNAME = 'FISH' then 'РЫБА'
-				when CATEGORYNAME = 'CEREALS' then 'ЗЕЛЕНЬ'
-				when CATEGORYNAME = 'DESSERTS' then 'ДЕСЕРТЫ'
-		end 'RESULT'
+	case
+		when CATEGORYNAME = 'DAIRY' then 'МОЛОЧНЫЕ ПРОДУКТЫ'
+		when CATEGORYNAME = 'FRUIT' then 'ФРУКТЫ'
+		when CATEGORYNAME = 'BAKERY PRODUCTS' then 'ВЫПЕЧКА'
+		when CATEGORYNAME = 'VEGETABLES' then 'ОВОЩИ'	
+		when CATEGORYNAME = 'DRINKS' then 'НАПИТКИ'	
+		when CATEGORYNAME = 'SAUCES' then 'СОУСЫ'
+		when CATEGORYNAME = 'SPICES' then 'СПЕЦИИ'
+		when CATEGORYNAME = 'MEAT' then 'МЯСО'
+		when CATEGORYNAME = 'FISH' then 'РЫБА'
+		when CATEGORYNAME = 'CEREALS' then 'ЗЕЛЕНЬ'
+		when CATEGORYNAME = 'DESSERTS' then 'ДЕСЕРТЫ'
+	end 'RESULT'
 from shop.category 
 ;
 -- 20. РАЗДЕЛИТЬ ТОВАРЫ ПО ЦЕНЕ НА ТРИ КАТЕГОРИИ : ДО 100 – ДЕШЕВЫЕ, ОТ 100 ДО 120 – СРЕДНИЕ, БОЛЕЕ 120 - ДОРОГИЕ
 
 select *,
-		case when PRICE<100 then 'ДЕШЕВЫЕ'
-				when PRICE>=100 and PRICE<=120 then 'СРЕДНИЕ'
-				else 'ДОРОГИЕ'
-		end 'PRICE_TYPE'
+	case when PRICE<100 then 'ДЕШЕВЫЕ'
+		when PRICE>=100 and PRICE<=120 then 'СРЕДНИЕ'
+		else 'ДОРОГИЕ'
+	end 'PRICE_TYPE'
 from shop.vendorcode
 ;
 -- 21. ПОСЧИТАТЬ СТОИМОСТЬ ВСЕХ ТОВАРОВ ПО НОВЫМ КАТЕГОРИЯМ (ДЕШЕВЫЕ, СРЕДНИЕ, ДОРОГИЕ)
 
 with list_1 as (select *,
-		case when PRICE<100 then 'ДЕШЕВЫЕ'
-				when PRICE>=100 and PRICE<=120 then 'СРЕДНИЕ'
-				else 'ДОРОГИЕ'
-		end 'PRICE_TYPE'
+	case when PRICE<100 then 'ДЕШЕВЫЕ'
+		when PRICE>=100 and PRICE<=120 then 'СРЕДНИЕ'
+		else 'ДОРОГИЕ'
+	end 'PRICE_TYPE'
 from shop.vendorcode)
 
 select PRICE_TYPE, sum(PRICE)
@@ -248,8 +248,9 @@ group by PRICE_TYPE
 -- 22. ВСЕМ ТОВАРАМ, У КОТОРЫХ НЕТ СКИДКИ – ДОБАВИТЬ СКИДКУ 2%
 
 select *,
-		case when DISCOUNT is null then '2'
-		when DISCOUNT is not null then DISCOUNT end 'DISCOUNT_NEW'
+	case when DISCOUNT is null then '2'
+		when DISCOUNT is not null then DISCOUNT 
+	end 'DISCOUNT_NEW'
 from shop.category
 ;
 -- 23. ВЫВЕСТИ СПИСОК ПРОДУКОВ, КОТОРЫЕ НЕ ПОКУПАЛИ
@@ -263,9 +264,9 @@ where p.VENDORCODE is null
 -- 24. ВЫВЕДИТЕ ИЗ ТАБЛИЦЫ С АРТИКУЛАМИ ДАННЫЕ, УКАЗАВ В ДОПОЛНИТЕЛЬНОМ СТОЛЦЕ – БЫЛИ ЛИ КУПЛЕНЫ ЭТИ ТОВАРЫ МУЖЧИНАМИ ИЛИ НЕТ
 
 select v.*,
-		case when c.GENDER = 'M' then 'Куплен мужчиной' 
-			else 'нет' 
-		end 'Gender_purchase'
+	case when c.GENDER = 'M' then 'Куплен мужчиной' 
+		else 'нет' 
+	end 'Gender_purchase'
 from shop.vendorcode v 
 left join shop.purchase p on 1=1
 and v.VENDORCODE = p.VENDORCODE 
@@ -276,9 +277,9 @@ and p.ID = c.id
 -- В ОСНОВНОМ ЗАПРОСЕ ВЫВЕДИТЕ ТОЛЬКО ТЕ СТРОКИ, ГДЕ ИТОГОВАЯ СТОИМОСТЬ БОЛЬШЕ 90
 
 with list_1 as (select v.VENDORCODE, v.PRICE, coalesce(c.DISCOUNT,0) as 'DISCOUNT',
-		case when coalesce(c.DISCOUNT,0)>0 then v.PRICE*(100-coalesce(c.DISCOUNT,0))/100 
-			else v.PRICE-20 
-		end 'NEW_PRICE'
+	case when coalesce(c.DISCOUNT,0)>0 then v.PRICE*(100-coalesce(c.DISCOUNT,0))/100 
+		else v.PRICE-20 
+	end 'NEW_PRICE'
 from shop.vendorcode v 
 join shop.category c on 1=1
 and v.PRODUCTCATEGORY = c.CATEGORYID) 
@@ -313,9 +314,9 @@ from shop.customer
 -- 29. ВЫВЕДИТЕ В ОТДЕЛЬНОМ СТОЛБЦЕ ИНФОРМАЦИЮ ОТ ТОМ, ЧЕТНЫЙ ЛИ ЭТО МЕСЯЦ
 
 select *, month(PURDATE) as 'MONTH',
-		case when month(PURDATE)%2=0 then 'even' 
-			else 'odd' 
-		end 'OST'
+	case when month(PURDATE)%2=0 then 'even' 
+		else 'odd' 
+	end 'OST'
 from shop.purchase
 ;
 -- 30. В КАКОМ ГОДУ БЫЛО БОЛЬШЕ ВСЕГО ПОКУПОК?
